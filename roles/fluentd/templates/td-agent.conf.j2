@@ -1,3 +1,4 @@
+# Input for Nginx access logs
 <source>
   @type tail
   path /var/log/nginx/access.log
@@ -8,6 +9,7 @@
   </parse>
 </source>
 
+# Input for Nginx error logs
 <source>
   @type tail
   path /var/log/nginx/error.log
@@ -20,19 +22,36 @@
   </parse>
 </source>
 
-<filter nginx.*>
+# Filter to check IPs against denylist
+<filter nginx.access>
   @type grep
-  <exclude>
+  <regexp>
     key remote_addr
-    pattern_file /etc/td-agent/denylist.txt
-  </exclude>
+    pattern /^(?!#{File.readlines("#{ENV['FLUENT_CONFIG_DIR'] || '/etc/td-agent'}/denied_ips/denylist.txt").map(&:strip).join('|')}).*$/
+  </regexp>
 </filter>
 
-<match nginx.*>
+# Route normal logs (non-denied IPs)
+<match nginx.access>
+  @type file
+  path /var/log/td-agent/nginx_access
+  append true
+  <buffer>
+    timekey 1d
+    timekey_use_utc true
+    timekey_wait 10m
+  </buffer>
+  <format>
+    @type json
+  </format>
+</match>
+
+# Route denied IP logs to audit file
+<match nginx.access>
   @type copy
   <store>
     @type file
-    path /var/log/td-agent/denylist_audit
+    path /var/log/td-agent/audit/denylist_audit
     append true
     <buffer>
       timekey 1d
@@ -41,6 +60,23 @@
     </buffer>
     <format>
       @type json
+      include_time_key true
+      time_key timestamp
     </format>
   </store>
+</match>
+
+# Handle error logs
+<match nginx.error>
+  @type file
+  path /var/log/td-agent/nginx_error
+  append true
+  <buffer>
+    timekey 1d
+    timekey_use_utc true
+    timekey_wait 10m
+  </buffer>
+  <format>
+    @type json
+  </format>
 </match>

@@ -1,20 +1,23 @@
 ---
-- name: Install Fluentd repository GPG key
-  apt_key:
-    url: https://packages.treasuredata.com/GPG-KEY-td-agent
-    state: present
+- name: Download and run Fluentd installation script
+  shell: |
+    curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-jammy-fluent-package5-lts.sh | sh
+  args:
+    executable: /bin/bash
 
-- name: Add Fluentd repository
-  apt_repository:
-    repo: deb http://packages.treasuredata.com/4/ubuntu/focal focal contrib
-    state: present
-    filename: treasure-data
+- name: Verify Fluentd installation
+  command: fluentd --version
+  register: fluentd_version
 
-- name: Install Fluentd (td-agent)
-  apt:
-    name: td-agent
-    state: present
-    update_cache: yes
+- debug:
+    var: fluentd_version.stdout
+
+- name: Create Fluentd config directory
+  file:
+    path: "{{ fluentd_config_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes
 
 - name: Create Fluentd config
   template:
@@ -25,6 +28,6 @@
 
 - name: Enable and start Fluentd
   service:
-    name: td-agent
+    name: fluentd
     state: started
     enabled: yes

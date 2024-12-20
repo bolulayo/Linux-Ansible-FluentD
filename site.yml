@@ -1,6 +1,6 @@
 ---
 - name: Configure Web Server with Nginx and Fluentd
-  hosts: webservers
+  hosts: bloxroute
   become: yes
 
   roles:
