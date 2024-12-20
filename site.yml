@@ -1,0 +1,10 @@
+---
+- name: Configure Web Server with Nginx and Fluentd
+  hosts: webservers
+  become: yes
+
+  roles:
+    - common
+    - nginx
+    - security
+    - fluentd

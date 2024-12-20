@@ -1,0 +1,21 @@
+---
+- name: Install UFW
+  apt:
+    name: ufw
+    state: present
+
+- name: Configure UFW rules
+  ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    state: enabled
+  with_items: "{{ ufw_rules }}"
+
+- name: Disable unnecessary services
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  with_items: "{{ disabled_services }}"
+  ignore_errors: yes

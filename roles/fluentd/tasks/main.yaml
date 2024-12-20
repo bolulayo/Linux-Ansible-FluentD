@@ -1,0 +1,30 @@
+---
+- name: Install Fluentd repository GPG key
+  apt_key:
+    url: https://packages.treasuredata.com/GPG-KEY-td-agent
+    state: present
+
+- name: Add Fluentd repository
+  apt_repository:
+    repo: deb http://packages.treasuredata.com/4/ubuntu/focal focal contrib
+    state: present
+    filename: treasure-data
+
+- name: Install Fluentd (td-agent)
+  apt:
+    name: td-agent
+    state: present
+    update_cache: yes
+
+- name: Create Fluentd config
+  template:
+    src: td-agent.conf.j2
+    dest: "{{ fluentd_config_dir }}/td-agent.conf"
+    mode: '0644'
+  notify: restart fluentd
+
+- name: Enable and start Fluentd
+  service:
+    name: td-agent
+    state: started
+    enabled: yes

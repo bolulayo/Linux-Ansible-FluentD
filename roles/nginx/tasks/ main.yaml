@@ -1,0 +1,29 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Create simple HTML page
+  copy:
+    content: |
+      <!DOCTYPE html>
+      <html>
+      <head><title>Hello, World!</title></head>
+      <body><h1>Hello, World!</h1></body>
+      </html>
+    dest: "{{ nginx_html_root }}/index.html"
+    mode: '0644'
+  notify: restart nginx
+
+- name: Enable and start Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Configure logrotate for Nginx
+  template:
+    src: nginx-logrotate.j2
+    dest: /etc/logrotate.d/nginx
+    mode: '0644'

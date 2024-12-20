@@ -1,0 +1,4 @@
+---
+nginx_html_root: /var/www/html
+fluentd_config_dir: /etc/td-agent
+log_retention_days: 5
