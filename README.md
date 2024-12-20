@@ -15,9 +15,15 @@ Paste your Ip address in your browser, like the image below
 ![nginx hello world](./images/hello-world.png)
 
 ## Working Fluentd Service
+```
+sudo systemctl status fluentd
+```
 ![fluentd-service](./images/fluentd-service.png)
 
 ## Fluentd Logs
+```
+tail -f /var/log/fluent/fluentd.log 
+```
 ![fluentd-logs](./images/fluentd-logs.png)
 
 
