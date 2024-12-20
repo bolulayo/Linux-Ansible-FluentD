@@ -2,7 +2,7 @@
 automate the installation and configuration of a web server using Ansible
 
 ## How to use
-1. Edit the below values in host.yaml
+1. Edit the below values in hosts.yaml
 - ansible_host
 - ansible_user
 - and also change ansible_ssh_private_key_file path
