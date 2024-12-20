@@ -1,6 +1,7 @@
 # Linux-Ansible-FluentD
 automate the installation and configuration of a web server using Ansible
 
+## Nginx Serve a Simple HTML Page
 ![nginx hello world](./images/hello-world.png)
 
 ## Working Fluentd Service
